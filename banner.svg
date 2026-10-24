@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 320" width="1200" height="320">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d1117"/>
+      <stop offset=".6" stop-color="#120a12"/>
+      <stop offset="1" stop-color="#22091a"/>
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#ff2d78" stroke-opacity=".08"/>
+    </pattern>
+    <pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse">
+      <rect width="4" height="1" fill="#000" opacity=".16"/>
+    </pattern>
+    <radialGradient id="glow" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#ff2d78" stop-opacity=".32"/>
+      <stop offset=".6" stop-color="#ff2d78" stop-opacity=".06"/>
+      <stop offset="1" stop-color="#ff2d78" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="bar" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ff2d78" stop-opacity="0"/>
+      <stop offset=".5" stop-color="#ff2d78" stop-opacity=".09"/>
+      <stop offset="1" stop-color="#ff2d78" stop-opacity="0"/>
+    </linearGradient>
+    <clipPath id="frame"><rect width="1200" height="320" rx="18"/></clipPath>
+    <clipPath id="sl1"><rect x="0" y="108" width="1200" height="18"/></clipPath>
+    <clipPath id="sl2"><rect x="0" y="150" width="1200" height="14"/></clipPath>
+    <symbol id="paw" viewBox="0 0 24 24">
+      <ellipse cx="12" cy="16.2" rx="5.6" ry="4.6"/>
+      <circle cx="4.6" cy="9.6" r="2.4"/>
+      <circle cx="9.1" cy="5.4" r="2.5"/>
+      <circle cx="14.9" cy="5.4" r="2.5"/>
+      <circle cx="19.4" cy="9.6" r="2.4"/>
+    </symbol>
+    <symbol id="heart" viewBox="0 0 24 24">
+      <path d="M12 21s-7-4.4-9.5-9C.8 8.6 2.7 4 6.8 4c2.2 0 3.7 1.3 5.2 3 1.5-1.7 3-3 5.2-3 4.1 0 6 4.6 4.3 8-2.5 4.6-9.5 9-9.5 9z"/>
+    </symbol>
+  </defs>
+
+  <style>
+    .t{font-family:'Consolas','Menlo','DejaVu Sans Mono','Courier New',monospace;font-weight:800;font-size:112px;letter-spacing:-2px;text-anchor:middle}
+    .sub{font-family:'Consolas','Menlo','DejaVu Sans Mono','Courier New',monospace;font-size:19px;letter-spacing:5px;text-anchor:middle;fill:#c9d1d9}
+    .hud{font-family:'Consolas','Menlo','DejaVu Sans Mono','Courier New',monospace;font-size:15px;fill:#ff2d78;opacity:.75}
+    .g1{animation:g1 4s infinite}
+    .g2{animation:g2 4s infinite .15s}
+    .s1{animation:sl 5s infinite}
+    .s2{animation:sl 5s infinite reverse .3s}
+    .fl{animation:fl 4s ease-in-out infinite}
+    .d1{animation-delay:-1s}.d2{animation-delay:-2s}.d3{animation-delay:-3s}
+    .tw{animation:tw 2.4s ease-in-out infinite}
+    .k1{animation-delay:-.6s}.k2{animation-delay:-1.2s}.k3{animation-delay:-1.8s}
+    .cur{animation:bl 1s steps(1) infinite}
+    .bar{animation:sc 5s linear infinite}
+    .fk{animation:fk 6s infinite}
+    @keyframes g1{0%,86%,100%{transform:translate(0,0)}88%{transform:translate(-7px,2px)}91%{transform:translate(6px,-2px)}94%{transform:translate(-3px,0)}}
+    @keyframes g2{0%,86%,100%{transform:translate(0,0)}88%{transform:translate(8px,-1px)}91%{transform:translate(-6px,2px)}94%{transform:translate(3px,0)}}
+    @keyframes sl{0%,82%,90%,100%{transform:translateX(0);opacity:0}83%{opacity:1}84%{transform:translateX(-26px);opacity:1}86%{transform:translateX(20px);opacity:1}88%{transform:translateX(-8px);opacity:1}}
+    @keyframes fl{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-12px) rotate(6deg)}}
+    @keyframes tw{0%,100%{opacity:.1}50%{opacity:1}}
+    @keyframes bl{0%{opacity:1}50%{opacity:0}}
+    @keyframes sc{from{transform:translateY(-90px)}to{transform:translateY(340px)}}
+    @keyframes fk{0%,100%{opacity:.95}61%{opacity:.95}62%{opacity:.35}64%{opacity:.95}66%{opacity:.5}67%{opacity:.95}}
+  </style>
+
+  <g clip-path="url(#frame)">
+    <rect width="1200" height="320" fill="url(#bg)"/>
+    <rect width="1200" height="320" fill="url(#grid)"/>
+    <ellipse cx="600" cy="160" rx="460" ry="150" fill="url(#glow)"/>
+
+    <!-- shards left -->
+    <g class="fk">
+      <polygon points="0,320 0,190 46,232 30,150 96,214 84,128 132,236 158,176 150,260 210,240 150,320" fill="#ff2d78" opacity=".9"/>
+      <polygon points="0,320 0,250 52,276 70,214 98,290 140,262 120,320" fill="#b3124a"/>
+      <polygon points="18,320 64,246 72,300 110,236 96,320" fill="#ff5c96" opacity=".7"/>
+      <polygon points="150,170 176,110 170,184 196,150 168,214" fill="#39ff88" opacity=".85"/>
+      <polygon points="0,96 38,120 12,138 54,160 0,176" fill="#ff2d78" opacity=".5"/>
+    </g>
+    <!-- shards right -->
+    <g class="fk d2">
+      <polygon points="1200,0 1200,140 1150,96 1166,176 1100,110 1112,200 1062,90 1036,150 1046,60 990,84 1046,0" fill="#ff2d78" opacity=".9"/>
+      <polygon points="1200,0 1200,70 1146,46 1128,104 1100,30 1060,58 1080,0" fill="#b3124a"/>
+      <polygon points="1180,0 1134,74 1126,20 1088,84 1102,0" fill="#ff5c96" opacity=".7"/>
+      <polygon points="1040,152 1016,216 1024,140 998,176 1026,110" fill="#39ff88" opacity=".85"/>
+      <polygon points="1200,226 1160,206 1188,188 1146,166 1200,150" fill="#ff2d78" opacity=".5"/>
+    </g>
+
+    <!-- sparkles -->
+    <g fill="#ffd1e1">
+      <circle class="tw" cx="230" cy="70" r="2.2"/>
+      <circle class="tw k1" cx="318" cy="250" r="1.8"/>
+      <circle class="tw k2" cx="884" cy="262" r="2.2"/>
+      <circle class="tw k3" cx="960" cy="48" r="1.8"/>
+      <circle class="tw k1" cx="760" cy="34" r="1.6"/>
+      <circle class="tw k2" cx="420" cy="36" r="1.6"/>
+      <circle class="tw k3" cx="70" cy="60" r="1.8"/>
+      <circle class="tw" cx="1130" cy="270" r="2"/>
+    </g>
+    <g fill="#39ff88">
+      <path class="tw k2" d="M258 210h12M264 204v12" stroke="#39ff88" stroke-width="2"/>
+      <path class="tw k1" d="M932 120h12M938 114v12" stroke="#39ff88" stroke-width="2"/>
+    </g>
+
+    <!-- paws & hearts -->
+    <g transform="translate(205 34)"><g class="fl"><use href="#paw" width="34" height="34" fill="#ff2d78" opacity=".55"/></g></g>
+    <g transform="translate(905 190)"><g class="fl d1"><use href="#paw" width="28" height="28" fill="#ff2d78" opacity=".45"/></g></g>
+    <g transform="translate(860 40)"><g class="fl d2"><use href="#heart" width="26" height="26" fill="none" stroke="#ff2d78" stroke-width="2.2" opacity=".8"/></g></g>
+    <g transform="translate(330 196)"><g class="fl d3"><use href="#heart" width="22" height="22" fill="none" stroke="#ff5c96" stroke-width="2.4" opacity=".75"/></g></g>
+    <g transform="translate(990 236)"><g class="fl d3"><use href="#heart" width="18" height="18" fill="#ff2d78" opacity=".6"/></g></g>
+
+    <!-- title -->
+    <g class="g1"><text class="t" x="596" y="170" fill="#39ff88" opacity=".85">mochiiwuff</text></g>
+    <g class="g2"><text class="t" x="604" y="170" fill="#ff2d78">mochiiwuff</text></g>
+    <text class="t" x="600" y="170" fill="#ffffff">mochiiwuff</text>
+    <g clip-path="url(#sl1)"><g class="s1"><text class="t" x="600" y="170" fill="#ff2d78">mochiiwuff</text></g></g>
+    <g clip-path="url(#sl2)"><g class="s2"><text class="t" x="600" y="170" fill="#39ff88">mochiiwuff</text></g></g>
+
+    <!-- subtitle -->
+    <rect x="390" y="208" width="420" height="2" fill="#ff2d78" opacity=".5"/>
+    <text class="sub" x="600" y="246">FURRY DEV <tspan fill="#ff2d78">✦</tspan> KOTLIN <tspan fill="#ff2d78">✦</tspan> PYTHON <tspan fill="#ff2d78">✦</tspan> REACT</text>
+
+    <!-- HUD -->
+    <text class="hud" x="40" y="44">&gt; whoami</text>
+    <rect class="cur" x="122" y="31" width="9" height="16" fill="#ff2d78"/>
+    <text class="hud" x="1160" y="282" text-anchor="end" style="fill:#39ff88">● online</text>
+    <path d="M24 60V24h36M1140 24h36v36M24 260v36h36M1140 296h36v-36" fill="none" stroke="#ff2d78" stroke-width="2" opacity=".6"/>
+
+    <!-- CRT -->
+    <rect class="bar" x="0" y="0" width="1200" height="90" fill="url(#bar)"/>
+    <rect width="1200" height="320" fill="url(#scan)"/>
+  </g>
+  <rect x="1" y="1" width="1198" height="318" rx="17" fill="none" stroke="#ff2d78" stroke-opacity=".35" stroke-width="2"/>
+</svg>

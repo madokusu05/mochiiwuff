@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 30" width="1200" height="30">
+  <defs>
+    <linearGradient id="ln" x1="0" x2="1">
+      <stop offset="0" stop-color="#ff2d78" stop-opacity="0"/>
+      <stop offset=".3" stop-color="#ff2d78"/>
+      <stop offset=".5" stop-color="#39ff88"/>
+      <stop offset=".7" stop-color="#ff2d78"/>
+      <stop offset="1" stop-color="#ff2d78" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="gl" x1="0" x2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+      <stop offset=".5" stop-color="#fff" stop-opacity=".9"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <clipPath id="c"><rect x="0" y="13" width="1200" height="4"/></clipPath>
+    <symbol id="paw" viewBox="0 0 24 24">
+      <ellipse cx="12" cy="16.2" rx="5.6" ry="4.6"/>
+      <circle cx="4.6" cy="9.6" r="2.4"/>
+      <circle cx="9.1" cy="5.4" r="2.5"/>
+      <circle cx="14.9" cy="5.4" r="2.5"/>
+      <circle cx="19.4" cy="9.6" r="2.4"/>
+    </symbol>
+  </defs>
+  <style>
+    .sh{animation:sh 3.5s linear infinite}
+    @keyframes sh{from{transform:translateX(-200px)}to{transform:translateX(1200px)}}
+  </style>
+  <rect x="0" y="14" width="560" height="2" fill="url(#ln)"/>
+  <rect x="640" y="14" width="560" height="2" fill="url(#ln)"/>
+  <g clip-path="url(#c)"><rect class="sh" x="0" y="13" width="160" height="4" fill="url(#gl)"/></g>
+  <use href="#paw" x="586" y="2" width="28" height="28" fill="#ff2d78"/>
+</svg>
