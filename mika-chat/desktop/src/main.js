@@ -21,6 +21,8 @@ let moved = false;
 let walkBones = [];
 let idleBones = [];
 let talkingBones = [];
+let nextBlinkAt = 0;
+let blinkStartedAt = -Infinity;
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(28, 1, 0.01, 100);
@@ -75,6 +77,10 @@ function setWalkingBones() {
   const idleBoneSettings = [
     ["spine", "x", 0.025],
     ["chest", "x", 0.018],
+    ["neck", "z", 0.012],
+    ["head", "z", 0.01],
+    ["leftUpperArm", "z", 0.009],
+    ["rightUpperArm", "z", -0.009],
   ];
 
   const talkingBoneSettings = [
@@ -123,6 +129,18 @@ async function loadAvatar() {
   VRMUtils.rotateVRM0(vrm);
   vrm.scene.traverse((object) => {
     object.frustumCulled = false;
+    if (!object.isMesh) return;
+
+    const materials = Array.isArray(object.material)
+      ? object.material
+      : [object.material];
+    for (const material of materials) {
+      if (material.color) material.color.setRGB(1, 1, 1);
+      if (material.map) {
+        material.map.colorSpace = THREE.SRGBColorSpace;
+        material.map.needsUpdate = true;
+      }
+    }
   });
 
   scene.add(vrm.scene);
@@ -139,6 +157,7 @@ async function loadAvatar() {
   camera.lookAt(0, modelHeight * 0.48, 0);
   camera.updateProjectionMatrix();
   setWalkingBones();
+  nextBlinkAt = clock.elapsedTime + 2 + Math.random() * 3;
 
   loading.remove();
   resize();
@@ -149,8 +168,11 @@ function render() {
   const delta = Math.min(clock.getDelta(), 0.05);
 
   if (vrm) {
-    vrm.update(delta);
     const time = clock.elapsedTime;
+    if (time >= nextBlinkAt) {
+      blinkStartedAt = time;
+      nextBlinkAt = time + 2.5 + Math.random() * 4;
+    }
     vrm.scene.position.y =
       Math.sin(time * (walking ? 11 : 2.1)) * (walking ? 0.018 : 0.01);
     vrm.scene.rotation.y = Math.sin(time * 0.65) * 0.035;
@@ -182,6 +204,14 @@ function render() {
       bone.rotation.x =
         baseX + Math.sin(time * 9 + (direction < 0 ? Math.PI : 0)) * amplitude;
     }
+
+    const blinkWeight = THREE.MathUtils.clamp(
+      1 - (time - blinkStartedAt) / 0.16,
+      0,
+      1,
+    );
+    vrm.expressionManager?.setValue("blink", blinkWeight);
+    vrm.update(delta);
   }
 
   renderer.render(scene, camera);
