@@ -40,6 +40,19 @@ Si le pare-feu Windows le demande, autorise Python uniquement sur les réseaux p
 
 N'active cet accès que sur un réseau de confiance. N'expose pas le port 8000 sur Internet et n'utilise pas cette option sur un réseau public. Ollama reste accessible uniquement depuis l'ordinateur ; seul le serveur de chat reçoit les connexions du réseau local.
 
+## Avatar 3D dans le chat
+
+L'avatar 3D remplace les petites icônes 2D à côté des réponses de Mika. Le rendu utilise le fichier personnel `models\Mika.vrm` ; il reste sur ton ordinateur et n'est pas ajouté à Git.
+
+Après avoir installé les dépendances du dossier `desktop` une première fois, compile l'avatar du chat :
+
+```powershell
+cd chemin\vers\mochiiwuff\mika-chat\desktop
+npm.cmd run build:chat-avatar
+```
+
+La commande crée `mika-chat\static\mika-avatar.js`. Ensuite, lance normalement `python server.py` depuis `mika-chat` et ouvre <http://localhost:8000>. Si le VRM ou le rendu 3D n'est pas disponible, le chat conserve l'avatar 2D de secours.
+
 ## Avatar 3D flottant sur le bureau Windows
 
 L'avatar de bureau utilise le fichier VRM que tu as exporté depuis VRoid Studio. Il reste local au projet et n'est pas ajouté à Git.

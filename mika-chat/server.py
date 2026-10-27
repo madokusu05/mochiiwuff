@@ -42,6 +42,40 @@ class MikaHandler(BaseHTTPRequestHandler):
             self.send_json(200, {"speaking": speaking})
             return
 
+        if self.path == "/mika-avatar.js":
+            asset_path = APP_DIR / "static" / "mika-avatar.js"
+            if not asset_path.is_file():
+                self.send_json(
+                    503,
+                    {
+                        "error": (
+                            "L'avatar 3D du chat n'est pas encore compilé. "
+                            "Lance `npm.cmd run build:chat-avatar` dans le dossier "
+                            "mika-chat\\desktop."
+                        )
+                    },
+                )
+                return
+            self.send_bytes(
+                200,
+                "text/javascript; charset=utf-8",
+                asset_path.read_bytes(),
+            )
+            return
+
+        if self.path == "/models/Mika.vrm":
+            model_path = APP_DIR / "models" / "Mika.vrm"
+            if not model_path.is_file():
+                self.send_json(404, {"error": "Le fichier local models\\Mika.vrm est introuvable."})
+                return
+            try:
+                body = model_path.read_bytes()
+            except OSError as error:
+                self.send_json(500, {"error": f"Impossible de lire le modèle VRM : {error}"})
+                return
+            self.send_bytes(200, "model/gltf-binary", body)
+            return
+
         files = {
             "/": ("index.html", "text/html; charset=utf-8"),
             "/styles.css": ("styles.css", "text/css; charset=utf-8"),

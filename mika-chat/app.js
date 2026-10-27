@@ -50,6 +50,9 @@ function addMessage(role, text, options = {}) {
 
 function setWaiting(value) {
   waiting = value;
+  document.dispatchEvent(
+    new CustomEvent("mika:waiting", { detail: value }),
+  );
   sendButton.disabled = value;
   input.disabled = value;
   sendButton.setAttribute("aria-label", value ? "Mika prépare une réponse" : "Envoyer le message");

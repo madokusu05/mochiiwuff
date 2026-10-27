@@ -4,3 +4,4 @@ desktop/dist/
 desktop/public/models/Mika.vrm
 __pycache__/
 *.py[cod]
+static/mika-avatar.js
