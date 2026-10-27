@@ -16,4 +16,9 @@ contextBridge.exposeInMainWorld("mikaDesktop", {
   onFacing: (callback) => {
     ipcRenderer.on("mika:facing", (_event, facing) => callback(facing));
   },
+  onConversationState: (callback) => {
+    ipcRenderer.on("mika:conversation", (_event, speaking) =>
+      callback(speaking),
+    );
+  },
 });

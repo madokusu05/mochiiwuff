@@ -21,12 +21,15 @@ let avatarWindow;
 let tray;
 let chatServerProcess;
 let moveTimer;
+let activityTimer;
 let currentTarget;
 let nextMoveAt = 0;
 let roaming = true;
 let dragging = false;
 let facing = 1;
 let quitting = false;
+let lastSpeakingState = false;
+let lastActivityError;
 
 function delay(milliseconds) {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
@@ -65,6 +68,39 @@ async function ensureChatServer() {
   throw new Error(
     "Le serveur de chat local n'a pas démarré. Vérifie que Python 3 est installé.",
   );
+}
+
+async function pollChatActivity() {
+  try {
+    const response = await fetch(`${CHAT_URL}/api/activity`, {
+      signal: AbortSignal.timeout(1200),
+    });
+    if (!response.ok) {
+      throw new Error(`Le serveur de chat a répondu ${response.status}.`);
+    }
+
+    const activity = await response.json();
+    if (typeof activity.speaking !== "boolean") {
+      throw new Error("L'état de conversation de Mika est invalide.");
+    }
+
+    lastActivityError = undefined;
+    if (activity.speaking !== lastSpeakingState) {
+      lastSpeakingState = activity.speaking;
+      avatarWindow?.webContents.send("mika:conversation", lastSpeakingState);
+    }
+  } catch (error) {
+    if (lastActivityError !== error.message) {
+      console.error("Impossible de lire l'état de conversation de Mika.", error);
+    }
+    lastActivityError = error.message;
+    if (lastSpeakingState) {
+      lastSpeakingState = false;
+      avatarWindow?.webContents.send("mika:conversation", false);
+    }
+  } finally {
+    if (!quitting) activityTimer = setTimeout(pollChatActivity, 400);
+  }
 }
 
 function setRoaming(enabled) {
@@ -270,6 +306,7 @@ app.whenReady().then(async () => {
     createAvatarWindow();
     createTray();
     startRoaming();
+    void pollChatActivity();
   } catch (error) {
     await dialog.showMessageBox({
       type: "error",
@@ -285,6 +322,7 @@ app.whenReady().then(async () => {
 app.on("before-quit", () => {
   quitting = true;
   clearInterval(moveTimer);
+  clearTimeout(activityTimer);
   if (chatServerProcess && chatServerProcess.exitCode === null) {
     chatServerProcess.kill();
   }

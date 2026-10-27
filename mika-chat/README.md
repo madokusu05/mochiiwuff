@@ -58,7 +58,7 @@ L'avatar de bureau utilise le fichier VRM que tu as exporté depuis VRoid Studio
    npm start
    ```
 
-L'application démarre le serveur Python du chat, puis affiche Mika dans une fenêtre transparente qui reste au-dessus des autres fenêtres. Mika se cache quand tu passes à une autre fenêtre ; clique sur son icône près de l'horloge pour l'afficher de nouveau. Le menu de cette icône permet aussi de quitter l'application. Quand tu survoles Mika, les boutons permettent d'ouvrir le chat ou de mettre ses déplacements en pause. Tu peux aussi faire glisser Mika pour la déplacer. Ollama doit être lancé avec le modèle `mika` disponible.
+L'application démarre le serveur Python du chat, puis affiche Mika dans une fenêtre transparente qui reste au-dessus des autres fenêtres. Au repos, elle respire et bouge légèrement ; pendant qu'Ollama prépare sa réponse, elle bouge la tête et les bras et anime la bouche si le modèle contient cette expression. Mika se cache quand tu passes à une autre fenêtre ; clique sur son icône près de l'horloge pour l'afficher de nouveau. Le menu de cette icône permet aussi de quitter l'application. Quand tu survoles Mika, les boutons permettent d'ouvrir le chat ou de mettre ses déplacements en pause. Tu peux aussi faire glisser Mika pour la déplacer. Ollama doit être lancé avec le modèle `mika` disponible.
 
 ## Mémoire et confidentialité
 

@@ -1,5 +1,6 @@
 import argparse
 import json
+import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.error import HTTPError, URLError
@@ -11,6 +12,8 @@ OLLAMA_CHAT_URL = "http://127.0.0.1:11434/api/chat"
 MAX_REQUEST_SIZE = 1_000_000
 MAX_MESSAGES = 80
 MAX_MESSAGE_LENGTH = 10_000
+activity_lock = threading.Lock()
+active_chat_requests = 0
 
 
 class MikaHandler(BaseHTTPRequestHandler):
@@ -33,6 +36,12 @@ class MikaHandler(BaseHTTPRequestHandler):
         self.send_bytes(status, "application/json; charset=utf-8", body)
 
     def do_GET(self):
+        if self.path == "/api/activity":
+            with activity_lock:
+                speaking = active_chat_requests > 0
+            self.send_json(200, {"speaking": speaking})
+            return
+
         files = {
             "/": ("index.html", "text/html; charset=utf-8"),
             "/styles.css": ("styles.css", "text/css; charset=utf-8"),
@@ -101,50 +110,60 @@ class MikaHandler(BaseHTTPRequestHandler):
             method="POST",
         )
 
+        global active_chat_requests
+        with activity_lock:
+            active_chat_requests += 1
+
         try:
-            with urlopen(request, timeout=180) as response:
-                ollama_result = json.loads(response.read())
-        except HTTPError as error:
             try:
-                error_payload = json.loads(error.read())
-                detail = (
-                    error_payload.get("error", str(error))
-                    if isinstance(error_payload, dict)
-                    else str(error)
-                )
-            except (json.JSONDecodeError, UnicodeDecodeError):
-                detail = str(error)
-            self.send_json(502, {"error": f"Ollama a refusé la requête : {detail}"})
-            return
-        except (URLError, TimeoutError) as error:
-            self.send_json(
-                502,
-                {
-                    "error": (
-                        "Impossible de joindre Ollama sur cet ordinateur. "
-                        "Vérifie qu'Ollama est lancé et que le modèle « mika » "
-                        f"est installé. Détail : {error}"
+                with urlopen(request, timeout=180) as response:
+                    ollama_result = json.loads(response.read())
+            except HTTPError as error:
+                try:
+                    error_payload = json.loads(error.read())
+                    detail = (
+                        error_payload.get("error", str(error))
+                        if isinstance(error_payload, dict)
+                        else str(error)
                     )
-                },
+                except (json.JSONDecodeError, UnicodeDecodeError):
+                    detail = str(error)
+                self.send_json(502, {"error": f"Ollama a refusé la requête : {detail}"})
+                return
+            except (URLError, TimeoutError) as error:
+                self.send_json(
+                    502,
+                    {
+                        "error": (
+                            "Impossible de joindre Ollama sur cet ordinateur. "
+                            "Vérifie qu'Ollama est lancé et que le modèle « mika » "
+                            f"est installé. Détail : {error}"
+                        )
+                    },
+                )
+                return
+            except (json.JSONDecodeError, UnicodeDecodeError):
+                self.send_json(502, {"error": "Ollama a renvoyé une réponse illisible."})
+                return
+
+            result_message = (
+                ollama_result.get("message")
+                if isinstance(ollama_result, dict)
+                else None
             )
-            return
-        except (json.JSONDecodeError, UnicodeDecodeError):
-            self.send_json(502, {"error": "Ollama a renvoyé une réponse illisible."})
-            return
+            answer = (
+                result_message.get("content")
+                if isinstance(result_message, dict)
+                else None
+            )
+            if not isinstance(answer, str) or not answer:
+                self.send_json(502, {"error": "Ollama n'a pas renvoyé de réponse."})
+                return
 
-        result_message = (
-            ollama_result.get("message") if isinstance(ollama_result, dict) else None
-        )
-        answer = (
-            result_message.get("content")
-            if isinstance(result_message, dict)
-            else None
-        )
-        if not isinstance(answer, str) or not answer:
-            self.send_json(502, {"error": "Ollama n'a pas renvoyé de réponse."})
-            return
-
-        self.send_json(200, {"reply": answer})
+            self.send_json(200, {"reply": answer})
+        finally:
+            with activity_lock:
+                active_chat_requests -= 1
 
     def log_message(self, format_string, *args):
         print(f"[mika-chat] {self.address_string()} - {format_string % args}")

@@ -14,9 +14,13 @@ const clock = new THREE.Clock();
 let vrm;
 let facing = 1;
 let walking = false;
+let talking = false;
+let talkingWeight = 0;
 let pointerOrigin;
 let moved = false;
 let walkBones = [];
+let idleBones = [];
+let talkingBones = [];
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(28, 1, 0.01, 100);
@@ -28,12 +32,11 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
 renderer.setClearColor(0x000000, 0);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.1;
+renderer.toneMapping = THREE.NoToneMapping;
 surface.prepend(renderer.domElement);
 
-scene.add(new THREE.HemisphereLight(0xfff0f3, 0x40364c, 2));
-const keyLight = new THREE.DirectionalLight(0xffffff, 2);
+scene.add(new THREE.HemisphereLight(0xfff0f3, 0x40364c, 0.9));
+const keyLight = new THREE.DirectionalLight(0xffffff, 1.2);
 keyLight.position.set(-2, 4, 5);
 scene.add(keyLight);
 
@@ -65,6 +68,45 @@ function setWalkingBones() {
         bone,
         direction,
         baseX: bone.rotation.x,
+      };
+    })
+    .filter(Boolean);
+
+  const idleBoneSettings = [
+    ["spine", "x", 0.025],
+    ["chest", "x", 0.018],
+  ];
+
+  const talkingBoneSettings = [
+    ["neck", "x", 0.035, 0],
+    ["head", "x", 0.06, Math.PI / 2],
+    ["leftUpperArm", "z", 0.04],
+    ["rightUpperArm", "z", -0.035, Math.PI],
+  ];
+
+  idleBones = idleBoneSettings
+    .map(([name, axis, amplitude]) => {
+      const bone = vrm.humanoid.getNormalizedBoneNode(name);
+      if (!bone) return undefined;
+      return {
+        bone,
+        axis,
+        amplitude,
+        baseRotation: bone.rotation[axis],
+      };
+    })
+    .filter(Boolean);
+
+  talkingBones = talkingBoneSettings
+    .map(([name, axis, amplitude, phase = 0]) => {
+      const bone = vrm.humanoid.getNormalizedBoneNode(name);
+      if (!bone) return undefined;
+      return {
+        bone,
+        axis,
+        amplitude,
+        phase,
+        baseRotation: bone.rotation[axis],
       };
     })
     .filter(Boolean);
@@ -109,8 +151,31 @@ function render() {
   if (vrm) {
     vrm.update(delta);
     const time = clock.elapsedTime;
-    vrm.scene.position.y = Math.sin(time * (walking ? 11 : 2)) * (walking ? 0.018 : 0.006);
+    vrm.scene.position.y =
+      Math.sin(time * (walking ? 11 : 2.1)) * (walking ? 0.018 : 0.01);
     vrm.scene.rotation.y = Math.sin(time * 0.65) * 0.035;
+
+    const breathing = Math.sin(time * 2.1);
+    talkingWeight = THREE.MathUtils.damp(
+      talkingWeight,
+      talking ? 1 : 0,
+      5,
+      delta,
+    );
+    for (const { bone, axis, amplitude, baseRotation } of idleBones) {
+      bone.rotation[axis] = baseRotation + breathing * amplitude;
+    }
+
+    const speechMotion = talkingWeight * Math.sin(time * 7);
+    for (const { bone, axis, amplitude, phase, baseRotation } of talkingBones) {
+      bone.rotation[axis] =
+        baseRotation +
+        speechMotion * amplitude * Math.sin(time * 2.3 + phase);
+    }
+    vrm.expressionManager?.setValue(
+      "aa",
+      talkingWeight * (0.2 + Math.abs(Math.sin(time * 8)) * 0.35),
+    );
 
     for (const { bone, direction, baseX } of walkBones) {
       const amplitude = walking ? 0.22 : 0;
@@ -186,6 +251,10 @@ window.mikaDesktop.onMovement((isWalking, direction) => {
 window.mikaDesktop.onFacing((direction) => {
   facing = direction;
   surface.classList.toggle("facing-left", facing < 0);
+});
+
+window.mikaDesktop.onConversationState((isSpeaking) => {
+  talking = isSpeaking;
 });
 
 window.addEventListener("keydown", (event) => {
