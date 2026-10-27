@@ -42,7 +42,7 @@ N'active cet accès que sur un réseau de confiance. N'expose pas le port 8000 s
 
 ## Avatar 3D dans le chat
 
-L'avatar 3D remplace les petites icônes 2D à côté des réponses de Mika. Le rendu utilise le fichier personnel `models\Mika.vrm` ; il reste sur ton ordinateur et n'est pas ajouté à Git.
+L'avatar 3D remplace les petites icônes 2D à côté des réponses de Mika. Chaque icône montre un cadrage rapproché du visage et des épaules. Le rendu utilise le fichier personnel `models\Mika.vrm` ; il reste sur ton ordinateur et n'est pas ajouté à Git.
 
 Après avoir installé les dépendances du dossier `desktop` une première fois, compile l'avatar du chat :
 

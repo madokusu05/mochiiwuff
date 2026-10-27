@@ -33,7 +33,7 @@ const keyLight = new THREE.DirectionalLight(0xffffff, 1.2);
 keyLight.position.set(-2, 4, 5);
 scene.add(keyLight);
 
-const camera = new THREE.PerspectiveCamera(28, 1, 0.01, 100);
+const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.01, 100);
 const clock = new THREE.Clock();
 let vrm;
 let nextBlinkAt = 0;
@@ -114,7 +114,17 @@ async function loadAvatar() {
   vrm.scene.position.y -= bounds.min.y;
 
   const target = new THREE.Vector3(0, height * 0.84, center.z);
-  camera.position.set(0, target.y, center.z + height * 0.9);
+  const head = vrm.humanoid.getNormalizedBoneNode("head");
+  if (head) {
+    head.getWorldPosition(target);
+    target.y += height * 0.035;
+  }
+  const frameSize = height * 0.42;
+  camera.left = -frameSize / 2;
+  camera.right = frameSize / 2;
+  camera.top = frameSize / 2;
+  camera.bottom = -frameSize / 2;
+  camera.position.set(target.x, target.y, target.z + height * 3);
   camera.lookAt(target);
   camera.updateProjectionMatrix();
   nextBlinkAt = clock.elapsedTime + 2 + Math.random() * 3;
