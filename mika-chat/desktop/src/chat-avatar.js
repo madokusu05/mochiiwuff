@@ -125,7 +125,7 @@ async function loadAvatar() {
   camera.right = frameSize / 2;
   camera.top = frameSize / 2;
   camera.bottom = -frameSize / 2;
-  camera.position.set(target.x, target.y, target.z - height * 3);
+  camera.position.set(target.x, target.y, target.z + height * 3);
   camera.lookAt(target);
   camera.updateProjectionMatrix();
   nextBlinkAt = clock.elapsedTime + 2 + Math.random() * 3;
