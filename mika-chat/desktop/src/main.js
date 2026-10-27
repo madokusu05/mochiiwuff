@@ -127,6 +127,24 @@ async function loadAvatar() {
   if (!vrm) throw new Error("Le fichier n'est pas un modèle VRM reconnu.");
 
   VRMUtils.rotateVRM0(vrm);
+  const legacyMaterials =
+    gltf.parser.json.extensions?.VRM?.materialProperties ?? [];
+  const legacyMaterialByName = new Map(
+    legacyMaterials.map((material) => [material.name, material]),
+  );
+  const loadedTextures = new Map();
+  let restoredTextureCount = 0;
+
+  for (const material of legacyMaterials) {
+    const textureIndex = material.textureProperties?._MainTex;
+    if (!Number.isInteger(textureIndex)) continue;
+    loadedTextures.set(
+      material.name,
+      await gltf.parser.getDependency("texture", textureIndex),
+    );
+  }
+
+  let restoredTextureCount = 0;
   vrm.scene.traverse((object) => {
     object.frustumCulled = false;
     if (!object.isMesh) return;
@@ -135,13 +153,23 @@ async function loadAvatar() {
       ? object.material
       : [object.material];
     for (const material of materials) {
-      if (material.color) material.color.setRGB(1, 1, 1);
+      const legacyTexture = legacyMaterialByName.has(material.name)
+        ? loadedTextures.get(material.name)
+        : undefined;
+      if (legacyTexture && material.map !== legacyTexture) {
+        material.map = legacyTexture;
+        material.needsUpdate = true;
+        restoredTextureCount += 1;
+      }
       if (material.map) {
         material.map.colorSpace = THREE.SRGBColorSpace;
         material.map.needsUpdate = true;
       }
     }
   });
+  if (restoredTextureCount > 0) {
+    console.info(`Textures VRM 0 réappliquées : ${restoredTextureCount}.`);
+  }
 
   scene.add(vrm.scene);
   vrm.scene.updateMatrixWorld(true);
