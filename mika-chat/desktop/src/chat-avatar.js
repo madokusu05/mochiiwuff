@@ -112,6 +112,7 @@ async function loadAvatar() {
   const height = Math.max(size.y, 1);
   vrm.scene.position.x -= center.x;
   vrm.scene.position.y -= bounds.min.y;
+  vrm.scene.updateMatrixWorld(true);
 
   const target = new THREE.Vector3(0, height * 0.84, center.z);
   const head = vrm.humanoid.getNormalizedBoneNode("head");
@@ -124,7 +125,7 @@ async function loadAvatar() {
   camera.right = frameSize / 2;
   camera.top = frameSize / 2;
   camera.bottom = -frameSize / 2;
-  camera.position.set(target.x, target.y, target.z + height * 3);
+  camera.position.set(target.x, target.y, target.z - height * 3);
   camera.lookAt(target);
   camera.updateProjectionMatrix();
   nextBlinkAt = clock.elapsedTime + 2 + Math.random() * 3;
