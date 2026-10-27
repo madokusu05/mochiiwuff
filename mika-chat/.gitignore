@@ -1,0 +1,6 @@
+models/Mika.vrm
+desktop/node_modules/
+desktop/dist/
+desktop/public/models/Mika.vrm
+__pycache__/
+*.py[cod]

@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8">
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'"
+    >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mika</title>
+  </head>
+  <body>
+    <main class="companion">
+      <div class="character-wrap" id="drag-surface" title="Fais glisser Mika pour la déplacer">
+        <div class="loading" id="loading">Mika arrive…</div>
+        <div class="load-error" id="load-error" hidden>
+          <strong>Je ne trouve pas mon avatar 3D.</strong>
+          <span>Vérifie que Mika.vrm est dans le dossier models.</span>
+        </div>
+      </div>
+      <div class="controls">
+        <button id="chat-button" type="button" title="Ouvrir le chat">Parler</button>
+        <button id="roam-button" type="button" title="Mettre en pause les déplacements">Pause</button>
+        <button class="quit-button" id="quit-button" type="button" title="Quitter Mika" aria-label="Quitter Mika">×</button>
+      </div>
+      <p class="caption">Mika <span class="caption-dot" aria-hidden="true"></span> à tes côtés</p>
+    </main>
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>

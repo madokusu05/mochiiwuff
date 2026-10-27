@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#111019">
+    <title>Mika — ton coin tranquille</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="Mika, accueil">
+          <span class="brand-mark" aria-hidden="true">
+            <img src="/mika-avatar.svg" alt="">
+          </span>
+          <span class="brand-copy">
+            <strong>Mika</strong>
+            <span>ton coin tranquille</span>
+          </span>
+        </a>
+        <div class="local-status">
+          <span class="status-dot" aria-hidden="true"></span>
+          IA locale
+        </div>
+      </header>
+
+      <section class="chat-panel" aria-label="Conversation avec Mika">
+        <div class="chat-heading">
+          <div>
+            <p class="eyebrow">SALON PRIVÉ · LOCAL</p>
+            <h1>On papote ?</h1>
+          </div>
+          <button class="clear-button" id="clear-chat" type="button">Effacer</button>
+        </div>
+
+        <div class="messages" id="messages" aria-live="polite" aria-relevant="additions">
+          <article class="message message-mika">
+            <span class="avatar" aria-hidden="true">
+              <img src="/mika-avatar.svg" alt="">
+            </span>
+            <div class="bubble">
+              <p>Salut ! Moi, c’est Mika. Je suis là pour discuter, t’écouter ou simplement partager un petit moment tranquille. Comment tu te sens aujourd’hui ?</p>
+              <time>maintenant</time>
+            </div>
+          </article>
+        </div>
+
+        <p class="notice">Tes messages restent dans cette page et ne sont pas enregistrés après sa fermeture.</p>
+
+        <form class="composer" id="chat-form">
+          <label class="sr-only" for="message-input">Ton message</label>
+          <textarea
+            id="message-input"
+            name="message"
+            rows="1"
+            maxlength="10000"
+            placeholder="Écris à Mika…"
+            autocomplete="off"
+            required
+          ></textarea>
+          <button class="send-button" id="send-button" type="submit" aria-label="Envoyer le message">
+            <span aria-hidden="true">↑</span>
+          </button>
+        </form>
+        <p class="hint">Entrée pour envoyer · Maj + Entrée pour aller à la ligne</p>
+      </section>
+
+      <footer class="footer">Un petit espace à toi, propulsé par une IA locale.</footer>
+    </main>
+  </body>
+</html>
