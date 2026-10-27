@@ -1,4 +1,14 @@
-const { app, BrowserWindow, dialog, ipcMain, screen, shell } = require("electron");
+const {
+  app,
+  BrowserWindow,
+  dialog,
+  ipcMain,
+  Menu,
+  nativeImage,
+  screen,
+  shell,
+  Tray,
+} = require("electron");
 const { spawn } = require("node:child_process");
 const path = require("node:path");
 
@@ -8,6 +18,7 @@ const CHAT_URL = "http://127.0.0.1:8000";
 const WINDOW_SIZE = { width: 300, height: 390 };
 
 let avatarWindow;
+let tray;
 let chatServerProcess;
 let moveTimer;
 let currentTarget;
@@ -63,6 +74,11 @@ function setRoaming(enabled) {
   avatarWindow?.webContents.send("mika:movement", false, facing);
 }
 
+function showAvatar() {
+  if (!avatarWindow || avatarWindow.isDestroyed()) return;
+  avatarWindow.showInactive();
+}
+
 function getTargetPosition() {
   const bounds = avatarWindow.getBounds();
   const display = screen.getDisplayMatching(bounds);
@@ -86,6 +102,7 @@ function startRoaming() {
     if (
       !avatarWindow ||
       avatarWindow.isDestroyed() ||
+      !avatarWindow.isVisible() ||
       !roaming ||
       dragging
     ) {
@@ -157,6 +174,9 @@ function createAvatarWindow() {
   avatarWindow.on("closed", () => {
     avatarWindow = undefined;
   });
+  avatarWindow.on("blur", () => {
+    if (!quitting) avatarWindow?.hide();
+  });
 
   const devUrl = process.env.MIKA_DEV_SERVER_URL;
   if (devUrl) {
@@ -166,6 +186,31 @@ function createAvatarWindow() {
   }
 
   avatarWindow.showInactive();
+}
+
+function createTray() {
+  const icon =
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAfUlEQVR42mNgGAUEwLtpO/5jE8OGidVPtMXUxgNqOUmOGFAH0NLyQeGIAQ+Bwe0AesQ/XkeMbAfQy3KcjiCkwcfAB45hYnO98+EYn7pRB1DFAdgwNgfQLA0Mq5wwWhCN1oYD5ogBbRUPaNOc4o7JgFlOiUNo3l2ju6XDFgAAjtflVTLmh/QAAAAASUVORK5CYII=";
+  tray = new Tray(nativeImage.createFromDataURL(icon));
+  tray.setToolTip("Mika");
+  tray.setContextMenu(
+    Menu.buildFromTemplate([
+      { label: "Afficher Mika", click: showAvatar },
+      {
+        label: "Masquer Mika",
+        click: () => avatarWindow?.hide(),
+      },
+      { type: "separator" },
+      { label: "Quitter Mika", click: () => app.quit() },
+    ]),
+  );
+  tray.on("click", () => {
+    if (avatarWindow?.isVisible()) {
+      avatarWindow.hide();
+    } else {
+      showAvatar();
+    }
+  });
 }
 
 ipcMain.on("mika:drag-start", () => {
@@ -223,6 +268,7 @@ app.whenReady().then(async () => {
   try {
     await ensureChatServer();
     createAvatarWindow();
+    createTray();
     startRoaming();
   } catch (error) {
     await dialog.showMessageBox({
